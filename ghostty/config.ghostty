@@ -1,0 +1,16 @@
+keybind = super+z=unbind
+keybind = super+shift+z=unbind
+keybind = super+a=unbind
+keybind = super+f=unbind
+keybind = super+d=unbind
+keybind = super+,=unbind
+keybind = super+home=unbind
+keybind = super+end=unbind
+keybind = super+shift+[=unbind
+keybind = super+shift+]=unbind
+keybind = super+1=unbind
+keybind = super+digit_1=unbind
+keybind = super+6=unbind
+keybind = super+digit_6=unbind
+keybind = f1=esc:OP
+keybind = f2=esc:OQ

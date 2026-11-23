@@ -1,0 +1,15 @@
+{
+  "$schema": "https://fresh-editor.dev/schemas/package.schema.json",
+  "name": "fresh-intellij-keymap",
+  "version": "0.1.0",
+  "description": "IntelliJ IDEA (macOS) keybindings for the Fresh terminal editor",
+  "type": "plugin",
+  "author": "getsadzeg",
+  "license": "MIT",
+  "repository": "https://github.com/getsadzeg/fresh-intellij-keymap",
+  "keywords": ["keymap", "keybindings", "intellij", "jetbrains", "macos"],
+  "fresh": {
+    "min_version": "0.5.9",
+    "entry": "fresh-intellij-keymap.ts"
+  }
+}

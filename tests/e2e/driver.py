@@ -116,7 +116,8 @@ def main(spec_path, result_path):
     for step in spec["steps"]:
         before = s.text()
         s.send(step["k"])
-        ok = s.wait(until=step.get("until"), timeout=step.get("timeout", 2.0), before=before)
+        ok = s.wait(until=step.get("until"), timeout=step.get("timeout", 2.0),
+                    before=None if step.get("anywhere") else before)
         if not ok and step.get("until"):
             res["timeouts"].append(f"{step.get('label') or repr(step['k'])}: {step['until']}")
         res["steps"].append({"label": step.get("label", ""), "before": before, "screen": s.text()})

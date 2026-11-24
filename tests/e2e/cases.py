@@ -1,3 +1,4 @@
+import re
 from dataclasses import dataclass, field
 from typing import Callable
 
@@ -22,8 +23,17 @@ class Case:
     ready: list = field(default_factory=list)
 
 
-def raw(seq, label, until=None):
-    return {"k": seq, "until": until, "timeout": 15.0 if until else 2.0, "label": label}
+def raw(seq, label, until=None, anywhere=False):
+    return {"k": seq, "until": until, "timeout": 15.0 if until else 2.0, "label": label, "anywhere": anywhere}
+
+
+def wait_for(pattern):
+    return raw("", f"wait for {pattern}", until=pattern, anywhere=True)
+
+
+def type_into(text, field):
+    return [raw(ch, f"type {text[:i + 1]!r}", until=field + re.escape(text[:i + 1]))
+            for i, ch in enumerate(text)]
 
 
 def press(combo, until=None):
@@ -147,12 +157,15 @@ CASES = [
          check=content("a.txt", "row1\nrow2\nrow3\n")),
     Case("cmd+shift+f finds in files", "plugin", "cmd+shift+f", "open_live_grep",
          files={"a.txt": TXT, "other.txt": "zz needle zz\n"},
-         steps=[press("cmd+shift+f", until=r"(?i)grep|search"), type_("needle", until=r"other\.txt")],
+         steps=[press("cmd+shift+f", until=r"Search\s+\["), *type_into("needle", r"Search\s+\["),
+                wait_for(r"other\.txt")],
          check=new_text("other.txt")),
     Case("cmd+shift+r replaces in files", "plugin", "cmd+shift+r", "start_search_replace",
          files={"a.txt": "needle\n", "other.txt": "x needle\n"},
-         steps=[press("cmd+shift+r", until=r"\*Search/Replace\*"), type_("needle", until=r"2 matches"), press("tab"),
-                type_("pin"), press("alt+enter"), press("enter", until=r"Replaced 2 occurrences")],
+         steps=[press("cmd+shift+r", until=r"Type a search pattern above"), *type_into("needle", r"Search: \["),
+                wait_for(r"2 matches / 2 files"), press("tab", until=r"Ln 1, Col [4-9]\d"),
+                *type_into("pin", r"Replace: \["), press("alt+enter", until=r"Replace 2 match\(es\)"),
+                press("enter", until=r"Replaced 2 occurrences")],
          check=lambda r: (r.files == {"a.txt": "pin\n", "other.txt": "x pin\n"}, f"files={r.files}")),
     Case("cmd+shift+o goes to file", "plugin", "cmd+shift+o", "quick_open_files",
          files={"a.txt": TXT, "zzfile.txt": "z\n"}, steps=[press("cmd+shift+o", until=r"zzfile\.txt")],
@@ -192,8 +205,11 @@ CASES = [
     Case("alt+f7 finds usages", "plugin", "alt+f7", "lsp_references",
          **go(), steps=at(9, 6) + [press("alt+f7", until=r"main\.go:14")], check=new_text("main.go:14")),
     Case("shift+f6 renames", "plugin", "shift+f6", "lsp_rename",
-         **go(), steps=at(14, 2) + [press("shift+f6"), *times(3, "backspace"), type_("bar"),
-                                   press("enter", until=r"bar\(1")], save=True,
+         **go(), steps=at(14, 2) + [press("shift+f6", until=r"Rename to: foo$"),
+                                   raw("\x7f", "backspace", until=r"Rename to: fo$"),
+                                   raw("\x7f", "backspace", until=r"Rename to: f$"),
+                                   raw("\x7f", "backspace", until=r"Rename to:$"),
+                                   *type_into("bar", r"Rename to: "), press("enter", until=r"bar\(1")], save=True,
          check=lambda r: (r.files["main.go"].count("bar(") == 2 and "foo" not in r.files["main.go"],
                           f"main.go has {r.files['main.go'].count('bar(')} x 'bar('")),
     Case("f1 shows quick documentation", "plugin", "f1", "lsp_hover",

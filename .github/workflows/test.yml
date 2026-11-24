@@ -11,12 +11,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: actions/setup-go@v5
+        with:
+          go-version: stable
+          cache: false
+
       - name: Install Fresh and gopls
         run: brew install fresh-editor gopls
 
       - name: Versions
         run: |
           fresh --version
+          go version
           gopls version
           fresh --version | grep -q ' 0\.5\.9$' || echo "::warning::Tested with Fresh 0.5.9, got $(fresh --version)"
 

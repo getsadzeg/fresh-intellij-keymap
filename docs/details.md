@@ -38,4 +38,4 @@ Use `"action": "noop"` to turn a key off, for example one from the table above.
 
 ## Uninstalling
 
-⌃P → **Package: Remove**, then restart Fresh. The shortcuts stay active until Fresh restarts.
+⌃P → **Package: Packages** → select fresh-intellij-keymap → **Uninstall**, then restart Fresh. The shortcuts stay active until Fresh restarts.

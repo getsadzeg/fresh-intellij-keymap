@@ -50,7 +50,7 @@ Everywhere. [Why](docs/details.md#not-supported-yet)
 
 ## Uninstall
 
-⌃P → **Package: Remove**, then restart Fresh.
+⌃P → **Package: Packages** → select fresh-intellij-keymap → **Uninstall**, then restart Fresh.
 
 ## How it's tested
 

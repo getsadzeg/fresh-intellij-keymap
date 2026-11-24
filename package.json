@@ -1,5 +1,5 @@
 {
-  "$schema": "https://fresh-editor.dev/schemas/package.schema.json",
+  "$schema": "https://raw.githubusercontent.com/sinelaw/fresh/main/crates/fresh-editor/plugins/schemas/package.schema.json",
   "name": "fresh-intellij-keymap",
   "version": "0.1.0",
   "description": "IntelliJ IDEA (macOS) keybindings for the Fresh terminal editor",

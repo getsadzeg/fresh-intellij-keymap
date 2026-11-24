@@ -4,6 +4,8 @@
 
 IntelliJ IDEA's macOS shortcuts for [Fresh](https://getfresh.dev), the terminal editor.
 
+![Go to Declaration, Find Usages, Rename, Quick Documentation, Add Next Occurrence, Duplicate Line and Find Action in Fresh](docs/demo.gif)
+
 ## Install
 
 In Fresh: ⌃P → **Package: Install from URL** → `https://github.com/getsadzeg/fresh-intellij-keymap`

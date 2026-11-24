@@ -1,0 +1,46 @@
+name: tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: macos-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Fresh and gopls
+        run: brew install fresh-editor gopls
+
+      - name: Versions
+        run: |
+          fresh --version
+          gopls version
+          fresh --version | grep -q ' 0\.5\.9$' || echo "::warning::Tested with Fresh 0.5.9, got $(fresh --version)"
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install pyte
+        run: |
+          python -m venv .venv
+          .venv/bin/pip install pyte
+
+      - name: Unit tests
+        run: python -m unittest discover -s tests/unit -v
+
+      - name: E2E tests
+        run: .venv/bin/python tests/e2e/run.py --keep
+
+      - name: Keep sessions on failure
+        if: failure()
+        run: tar czf sessions.tgz -C "$TMPDIR" $(cd "$TMPDIR" && ls -d fresh-keymap-tests-*) || true
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: test-sessions
+          path: sessions.tgz
